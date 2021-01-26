@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<p> </p>
+
+<script id="vertex-shader" type="x-shader/x-vertex">
+
+attribute  vec4 vPosition;
+attribute  vec4 vColor;
+attribute vec2 vTextCoord; //fTexCoord
+
+
+varying vec4 fColor;
+varying vec2 fTexCoord; //
+
+
+uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
+uniform vec4 scale;
+
+uniform vec3 theta;
+uniform vec4 offset;
+
+
+void main()
+{
+    vec3 angles = radians(theta);
+    vec3 c = cos(angles);
+    vec3 s = sin(angles);
+    mat4 rx = mat4( 1.0,  0.0,  0.0, 0.0,
+      0.0,  c.x,  s.x, 0.0,
+      0.0, -s.x,  c.x, 0.0,
+      0.0,  0.0,  0.0, 1.0 );
+
+    mat4 ry = mat4( c.y, 0.0, -s.y, 0.0,
+      0.0, 1.0,  0.0, 0.0,
+      s.y, 0.0,  c.y, 0.0,
+      0.0, 0.0,  0.0, 1.0 );
+
+
+    mat4 rz = mat4( c.z, s.z, 0.0, 0.0,
+      -s.z,  c.z, 0.0, 0.0,
+      0.0,  0.0, 1.0, 0.0,
+      0.0,  0.0, 0.0, 1.0 );
+
+    fColor = vColor;
+    fTexCoord=vTextCoord;
+
+    gl_Position = rz * ry * rx * vPosition;
+    gl_Position = gl_Position*scale+offset;
+
+    gl_Position = projectionMatrix*modelViewMatrix*gl_Position;
+}
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+
+#ifdef GL_ES
+precision highp float;
+#endif
+
+
+varying vec4 fColor;
+varying vec2 fTexCoord; //
+uniform sampler2D texture; //
+uniform float textureMapping;
+
+
+void
+main()
+{
+    //if(textureMapping == 1.0){
+      gl_FragColor=(texture2D(texture, fTexCoord))*fColor;
+    //}else{
+    //  gl_FragColor = fColor;
+    //}
+}
+</script>
+
+<script type="text/javascript" src="Common/webgl-utils.js"></script>
+<script type="text/javascript" src="Common/initShaders.js"></script>
+<script type="text/javascript" src="Common/MV.js"></script>
+<script type="text/javascript" src="main.js"></script>
+
+<script type="text/javascript" src="DrawingObject.js"></script>
+<script type="text/javascript" src="object/classroom.js"></script>
+<script type="text/javascript" src="object/blackboard.js"></script>
+<script type="text/javascript" src="object/chair.js"></script>
+<script type="text/javascript" src="object/desk.js"></script>
+<script type="text/javascript" src="object/lecture_desk.js"></script>
+<script type="text/javascript" src="object/blind.js"></script>
+<script type="text/javascript" src="object/locker.js"></script>
+<script type="text/javascript" src="object/clock.js"></script>
+<script type="text/javascript" src="object/door.js"></script>
+<script type="text/javascript" src="object/light.js"></script>
+<script type="text/javascript" src="object/number.js"></script>
+<script type="text/javascript" src="object/hint.js"></script>
+<script type="text/javascript" src="object/lock.js"></script>
+
+
+<script type="text/javascript">
+  function button_click(){
+    const pass = document.getElementById('password').value;
+    if(pass==5193){
+
+        //document.getElementById("test").innerHTML=pass;
+
+        //모달창 띄우기
+        // Get the modal
+      var modal = document.getElementById('myModal');
+      // Get the <span> element that closes the modal
+      var span = document.getElementsByClassName("close")[0];
+      // When the user clicks on the button, open the modal
+      modal.style.display = "block";
+      // When the user clicks on <span> (x), close the modal
+      span.onclick = function() {
+      modal.style.display = "none";
+      }
+      // When the user clicks anywhere outside of the modal, close it
+      window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+      }
+    }
+
+    else{
+          //모달창 띄우기
+          // Get the modal
+        var modal = document.getElementById('myModal2');
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+        // When the user clicks on the button, open the modal
+        modal.style.display = "block";
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() {
+        modal.style.display = "none";
+        }
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+        }
+      }
+    }
+</script>
+
+<style>
+        canvas {
+            border: 4px solid rgb(145, 145, 145);
+            float: left;
+        }
+
+        #control {
+            float: left;
+            padding: 10px;
+            padding-top: 0px;
+        }
+
+        #control * {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content/Box */
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 30%; /* Could be more or less, depending on screen size */
+            font-family: Fantasy;
+            font-size : 25px;
+        }
+        /* The Close Button */
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+
+</style>
+
+<body>
+<canvas id="gl-canvas" width="1024" height="512">
+Oops ... your browser doesn't support the HTML5 canvas element
+</canvas>
+&nbsp
+<h3 style="font-family:verdana;"> &nbsp Please enter the PASSWORD, </h3>
+
+&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
+
+<input type = "text" id="password" size = "4" maxlength="4" style = "font-family: Fantasy; border: 2px solid; font-size : 25px; vertical-align:top;">
+<button type="button" id="myBtn" onclick="button_click();" style="font-family: Helvetica; font-size : 27px; background:green"> enter </button>
+
+<br><br>
+&nbsp
+<audio autoplay="autoplay" loop="loop" controls="controls">
+  <source src="music.mp3" type="audio/mp3">
+</audio>
+<p id="test"></p>
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <p align="center">SUCCESS!!</p>
+  </div>
+
+</div>
+
+
+<!-- The Modal -->
+<div id="myModal2" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <p align="center">Please enter the PASSWORD, AGAIN ! </p>
+  </div>
+
+</div>
+
+</body>
+</html>
