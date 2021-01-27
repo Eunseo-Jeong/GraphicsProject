@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!--vertex shader-->
+<script id="vertex-shader" type="x-shader/x-vertex">
+//vertex shader
+attribute vec4 vPosition;
+attribute vec4 vColor;
+uniform vec4 offset;
+varying vec4 fColor;
+uniform float theta;
+void
+main()
+{
+    //store color
+    fColor = vColor;
+    gl_PointSize = 3.0;
+
+    float s = sin( theta );
+    float c = cos( theta );
+    //rotation matrix
+    mat4 rz = mat4(
+      c, -s, 0, 0,
+      s,  c, 0, 0,
+      0,  0, 1, 0,
+      0,  0, 0, 1
+    );
+    //rotation and move offset
+    gl_Position = vPosition * rz + offset;
+}
+</script>
+<!--fragment shader-->
+<script id="fragment-shader" type="x-shader/x-fragment">
+precision mediump float;
+varying vec4 fColor;
+
+void
+main()
+{
+    gl_FragColor = fColor;
+}
+</script>
+
+<script type="text/javascript" src="../Common/webgl-utils.js"></script>
+<script type="text/javascript" src="../Common/initShaders.js"></script>
+<script type="text/javascript" src="../Common/MV.js"></script>
+<script type="text/javascript" src="Assignment.js"></script>
+</head>
+
+<body>
+<canvas id="gl-canvas" width="512" height="512">
+Oops ... your browser doesn't support the HTML5 canvas element
+</canvas>
+
+
+<button
+id="btnToNight"
+type="button"
+style="color: #fff; background:green;
+font-size:1em;
+border-radius:0.5em;
+padding:3px 12px;"
+>Change to night</button>
+
+<button
+id="btnToSun"
+type="button"
+style="color: #fff; background:green;
+font-size:1em;
+border-radius:0.5em;
+padding:3px 12px;"
+>Change to sun</button>
+
+
+<button
+id="change_dir"
+type="button"
+style="color: #fff; background:black;
+font-size:1em;
+border-radius:0.5em;
+padding:3px 15px;"
+>Change sun rotation direction</button>
+
+</body>
+</html>
